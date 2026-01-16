@@ -1,3 +1,5 @@
+use email_core::models::EmailPreview;
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -9,11 +11,16 @@ async fn run_core_task() -> Result<String, String> {
     email_core::run_safe_task().await
 }
 
+#[tauri::command]
+async fn get_inbox() -> Result<Vec<EmailPreview>, String> {
+    email_core::fetch_inbox().await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, run_core_task])
+        .invoke_handler(tauri::generate_handler![greet, run_core_task, get_inbox])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

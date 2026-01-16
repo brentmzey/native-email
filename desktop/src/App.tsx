@@ -1,5 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+
+interface Email {
+  id: number;
+  sender: string;
+  subject: string;
+  preview: string;
+  date: string;
+}
 
 // Icons (Using SVGs directly for now to avoid extra deps, similar to SF Symbols)
 const MailIcon = () => (
@@ -18,13 +26,13 @@ const ShieldIcon = () => (
 function App() {
   const [safeTaskResult, setSafeTaskResult] = useState("");
   const [selectedMail, setSelectedMail] = useState<number | null>(null);
+  const [emails, setEmails] = useState<Email[]>([]);
 
-  // Mock Data
-  const emails = [
-    { id: 1, sender: "Apple", subject: "Your Receipt", preview: "Thank you for your purchase...", time: "10:30 AM" },
-    { id: 2, sender: "GitHub", subject: "[GitHub] Security Alert", preview: "We noticed a new login...", time: "Yesterday" },
-    { id: 3, sender: "Mom", subject: "Dinner?", preview: "Are you coming over this weekend?", time: "Friday" },
-  ];
+  useEffect(() => {
+    invoke("get_inbox")
+      .then((items) => setEmails(items as Email[]))
+      .catch(console.error);
+  }, []);
 
   async function runSafeTask() {
     try {
@@ -85,7 +93,7 @@ function App() {
                 >
                     <div className="flex justify-between items-baseline mb-1">
                         <span className={`font-semibold text-sm ${selectedMail === email.id ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{email.sender}</span>
-                        <span className={`text-xs ${selectedMail === email.id ? 'text-blue-100' : 'text-gray-500'}`}>{email.time}</span>
+                        <span className={`text-xs ${selectedMail === email.id ? 'text-blue-100' : 'text-gray-500'}`}>{email.date}</span>
                     </div>
                     <div className={`text-sm font-medium mb-0.5 ${selectedMail === email.id ? 'text-white' : 'text-gray-800 dark:text-gray-200'}`}>{email.subject}</div>
                     <div className={`text-xs truncate ${selectedMail === email.id ? 'text-blue-100' : 'text-gray-500'}`}>{email.preview}</div>
@@ -111,7 +119,7 @@ function App() {
                             </div>
                         </div>
                     </div>
-                    <span className="text-sm text-gray-500">{emails.find(e => e.id === selectedMail)?.time}</span>
+                    <span className="text-sm text-gray-500">{emails.find(e => e.id === selectedMail)?.date}</span>
                  </div>
                  <div className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-300">
                     <p>Hello,</p>
