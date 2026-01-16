@@ -1,0 +1,10 @@
+[package]
+name = "tui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+email-core = { path = "../email-core" }
+tokio = { version = "1", features = ["full"] }
+ratatui = "0.26"
+crossterm = "0.27"

@@ -1,0 +1,7 @@
+{
+  "name": "native-email-monorepo",
+  "private": true,
+  "workspaces": [
+    "desktop"
+  ]
+}

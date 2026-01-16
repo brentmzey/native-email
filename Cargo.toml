@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "email-core",
+    "tui",
+    "desktop/src-tauri",
+]
+resolver = "2"
